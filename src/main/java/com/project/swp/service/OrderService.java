@@ -30,16 +30,8 @@ public class OrderService {
         return orderRepo.deleteByOrderId(id);
     }
 
-    public void delteOrder(Order order) {
-        orderRepo.delete(order);
-    }
-
     public List<Order> getListOrderByCustomer(int  cusID) {
         return orderRepo.findByCustomer_CusIDOrderByOrderStatusDesc(cusID);
-    }
-
-    public List<Order> getListOrderByCusId(int cusId) {
-        return orderRepo.findAllByCustomer_CusID(cusId);
     }
 
 //    @Transactional

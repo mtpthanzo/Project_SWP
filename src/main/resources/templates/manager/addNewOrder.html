@@ -9,6 +9,7 @@
   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
+
 <div class="main">
   <h1>Place Your Order Here!</h1>
   <form id="formBook" th:action="@{/order/new/{id}(id=${detail.getResID()})}"  method="post" th:object="${order}">

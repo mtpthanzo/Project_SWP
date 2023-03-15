@@ -17,7 +17,6 @@ import java.util.Random;
 @RequestMapping("/boss")
 
 public class BossController {
-
     @Autowired
     private CompanyService companyService;
 
@@ -30,7 +29,7 @@ public class BossController {
         Company company = companyService.findCompanyById(companyId);
         company.setStatus(status);
         String password = "";
-        if(company.getPassword() ==null || company.getPassword().isEmpty()){
+        if((company.getPassword() == null || company.getPassword().isEmpty()) && status.equalsIgnoreCase("Active") ){
             Random r = new Random();
             String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             for (int i = 0; i < 8; i++) {

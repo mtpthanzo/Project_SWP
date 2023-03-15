@@ -3,7 +3,6 @@ package com.project.swp.controller;
 import com.project.swp.entity.*;
 import com.project.swp.service.*;
 import jakarta.servlet.http.HttpSession;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,25 +21,9 @@ public class RestaurantController {
     private CategoryMenuService categoryMenuService;
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private RateService rateService;
 
     @GetMapping("/customer/{id}")
-    public String  getDetailRestaurant(@PathVariable Integer id, Model model, HttpSession httpSession) {
-        Customer customer = (Customer) httpSession.getAttribute("customer");
-        List<Rate> listRateByResId = rateService.getListRateByResId(id);
-        model.addAttribute("listRate", listRateByResId);
-
-        List<Order> orderList = orderService.getListOrderByCusId(customer.getCusID());
-
-        if(orderList.isEmpty())
-            model.addAttribute("rateBefore", "rateBefore");
-        else if (listRateByResId.stream().anyMatch(rate -> rate.getRateId().getCustomer().equals(customer))) {
-            model.addAttribute("rateBefore", "rateBefore");
-        } else {
-            model.addAttribute("rateBefore", "");
-        }
-
+    public String  getDetailRestaurant(@PathVariable Integer id, Model model) {
         Restaurant restaurant = restaurantService.getDetailRes(id);
         model.addAttribute("detail", restaurant);
         List<Menu> listMenuDetailRes = menuService.getListMenuByResId(id);
@@ -79,7 +62,7 @@ public class RestaurantController {
         model.addAttribute("detail", restaurant);
         List<CategoryMenu> categoryMenus = categoryMenuService.getListCategory();
         model.addAttribute("listCategoryMenu", categoryMenus);
-        List<Menu> listMenuDetailRes = menuService.getListMenusBySearch(null, foodName, priceFrom, priceTo, restaurant);
+        List<Menu> listMenuDetailRes = menuService.getListMenusBySearch(new CategoryMenu(), foodName, priceFrom, priceTo, restaurant);
         model.addAttribute("listMenuDetailRes", listMenuDetailRes);
 
         Order order = new Order();
@@ -102,13 +85,5 @@ public class RestaurantController {
         return "redirect:/restaurant/customer/" + id;
     }
 
-    @PostMapping("/customer/rateRes/{id}")
-    public String RateRestaurant(@PathVariable int id, @RequestParam("star") int ratingPoint, @RequestParam("comment") String comment, HttpSession session) {
-        Customer customer = (Customer) session.getAttribute("customer");
-        Restaurant restaurant = restaurantService.getDetailRes(id);
-        RateId rateId = new RateId(restaurant, customer);
-        Rate rate = new Rate(rateId, comment, ratingPoint);
-        rateService.saveRate(rate);
-        return "redirect:/restaurant/customer/" + id;
-    }
+
 }
